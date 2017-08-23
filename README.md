@@ -1,4 +1,7 @@
-# Balls
+# Molecules
+
+This project works on Angular.
+Simple simulation of molecules motion with drag&drop molecules adding.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.0.
 
