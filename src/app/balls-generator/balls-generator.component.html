@@ -1,0 +1,6 @@
+<div class="generator">
+  <div class="ball" draggable="true" *ngFor="let ball of Balls" (mousedown)="onMouseDown($event)" (dragstart)="onDragStart($event)" [ngStyle]="{'background': ball.color, 'width.px': ball.radius, 'height.px': ball.radius}"></div>
+</div>
+<input type="color" [(ngModel)]="Balls[0].color">
+<input type="range" [(ngModel)]="Balls[0].radius" min="10" max="100">
+<app-canvas [offsetX]="offsetX" [offsetY]="offsetY" [radius]="Balls[0].radius" [color]="Balls[0].color"></app-canvas>

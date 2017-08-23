@@ -1,0 +1,12 @@
+.generator {
+  width: 300px;
+  height: 300px;
+  border: 1px solid red;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ball {
+  float: left;
+}
