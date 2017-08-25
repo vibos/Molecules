@@ -12,6 +12,8 @@ export class CanvasComponent implements OnInit {
   @Input() radius: number;
   @Input() color: string;
 
+  dt = 100; // ms
+
   @ViewChild('myIdentifier')
   myIdentifier: ElementRef;
 
@@ -20,26 +22,8 @@ export class CanvasComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    // console.log(this.myIdentifier.nativeElement.clientTop);
-    // console.log(this.myIdentifier.nativeElement.clientLeft);
-    setInterval(() => {
-      this.Balls.forEach(function(item) {
-        // let newX = item.x + Math.random() * 10 - 5;
-        // let newY = item.y + Math.random() * 10 - 5;
-        let newX = item.x + item.v * item.Vx;
-        let newY = item.y + item.v * item.Vy;
-
-        if (newX + item.radius / 2 > 500 || newX - item.radius / 2 < 0) {
-          item.Vx *= -1;
-          let newX = item.x + item.v * item.Vx;
-        } else if (newY + item.radius / 2 > 500 || newY - item.radius / 2 < 0) {
-          item.Vy *= -1;
-          let newY = item.y + item.v * item.Vy;
-        }
-        item.x = newX;
-        item.y = newY;
-      });
-    }, 100);
+    console.log(this.myIdentifier.nativeElement.clientX );
+    this.simulate();
   }
 
   onDragOver(e: DragEvent) {
@@ -47,9 +31,42 @@ export class CanvasComponent implements OnInit {
   }
 
   onDragDrop(e: DragEvent) {
-    const x = e.offsetX - (this.offsetX - 25);
-    const y = e.offsetY - (this.offsetY - 25);
+    const x = e.offsetX - (this.offsetX - this.radius);
+    const y = e.offsetY - (this.offsetY - this.radius);
 
     this.Balls.push(new Ball(x, y, this.radius, this.color));
+  }
+
+  simulate() {
+   setInterval(() => {
+      this.Balls.forEach((item, i) => {
+        let newX = item.x + this.dt * item.Vx / 1000;
+        let newY = item.y + this.dt * item.Vy / 1000;
+
+        // x borders
+        if (newX + item.radius > 500 && item.Vx > 0) {
+          newX = 500 * 2 - newX - item.radius * 2;
+          item.Vx *= -1;
+        } else if (newX - item.radius < 0 && item.Vx < 0) {
+          newX = - newX + item.radius * 2;
+          item.Vx *= -1;
+        }
+
+		// y borders
+        if (newY + item.radius > 500 && item.Vy > 0) {
+          newY = 500 * 2 - newY - item.radius * 2;
+          item.Vy *= -1;
+        } else if(newY - item.radius < 0 && item.Vy < 0) {
+          newY = - newY + item.radius * 2;
+          item.Vy *= -1;
+        }
+
+        item.moove(newX, newY);
+      });
+    }, this.dt);
+  }
+  
+  protected getDistanceBetweenDots(x1, y1, x2, y2) {
+	  return Math.sqrt( Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2) );
   }
 }

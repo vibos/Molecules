@@ -4,7 +4,6 @@ export class Ball {
   radius: number;
   color: string;
 
-  v: number;
   Vx: number;
   Vy: number;
 
@@ -14,8 +13,12 @@ export class Ball {
     this.radius = radius || 30;
     this.color = color || '#ff0000';
 
-    this.v = Math.random() * 3 + 1;
-    this.Vx = Math.random() * 10 - 5;
-    this.Vy = Math.random() * 10 - 5;
+    this.Vx = (Math.random() * 100 - 50) * 4; // px / second
+    this.Vy = (Math.random() * 100 - 50) * 4; // px / second
+  }
+
+  public moove(x: number, y: number) {
+    this.x = x;
+    this.y = y;
   }
 }

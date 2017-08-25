@@ -1,5 +1,5 @@
 <div class="canvas" #myIdentifier (dragover)="onDragOver($event)" (drop)="onDragDrop($event)">
-  <div class="ball" *ngFor="let ball of Balls" [ngStyle]="{'top.px': ball.y - 25, 'left.px': ball.x - 25, 'background': ball.color, 'width.px': ball.radius, 'height.px': ball.radius}">
+  <div class="ball" *ngFor="let ball of Balls" [ngStyle]="{'top.px': ball.y - ball.radius, 'left.px': ball.x - ball.radius, 'background': ball.color, 'width.px': ball.radius * 2, 'height.px': ball.radius * 2}">
 
   </div>
 </div>

@@ -10,7 +10,7 @@ export class BallsGeneratorComponent implements OnInit {
   offsetX: number;
   offsetY: number;
   radius: number;
-  color: string = "green";
+  color = "green";
 
   Balls: Ball[] = [];
 
@@ -21,7 +21,7 @@ export class BallsGeneratorComponent implements OnInit {
   }
 
   onBallAdd() {
-    this.Balls.push( new Ball(0, 0, 50, this.color) );
+    this.Balls.push( new Ball(0, 0, 30, this.color) );
   }
 
   /*
