@@ -3,6 +3,7 @@
   height: 500px;
   border: 1px dashed #000;
   position: relative;
+  clear: both;
 }
 
 .ball {
