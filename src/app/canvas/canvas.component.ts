@@ -22,7 +22,7 @@ export class CanvasComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log(this.myIdentifier.nativeElement.clientX );
+    // console.log(this.myIdentifier.nativeElement.clientX );
     this.simulate();
   }
 
@@ -31,10 +31,12 @@ export class CanvasComponent implements OnInit {
   }
 
   onDragDrop(e: DragEvent) {
-    const x = e.offsetX - (this.offsetX - this.radius);
-    const y = e.offsetY - (this.offsetY - this.radius);
+    if ( typeof(this.radius) !== "undefined" ) {
+      const x = e.offsetX - (this.offsetX - this.radius);
+      const y = e.offsetY - (this.offsetY - this.radius);
 
-    this.Balls.push(new Ball(x, y, this.radius, this.color));
+      this.Balls.push(new Ball(x, y, this.radius, this.color));
+    }
   }
 
   simulate() {
@@ -61,11 +63,22 @@ export class CanvasComponent implements OnInit {
           item.Vy *= -1;
         }
 
+	    	// each other
+        // for (let j = i + 1; j < this.Balls.length; j++) {
+        //   let ball = this.Balls[j];
+        //   if ( this.getDistanceBetweenDots(newX, newY, ball.x, ball.y) < item.radius + ball.radius ) {
+        //     ball.Vx = (ball.Vx + item.Vx) / 2;
+        //     ball.Vy = (ball.Vy + item.Vy) / 2;
+        //     item.Vx = -(ball.Vx + item.Vx) / 2;
+        //     item.Vy = -(ball.Vy + item.Vy) / 2;
+        //   }
+        // }
+
         item.moove(newX, newY);
       });
     }, this.dt);
   }
-  
+
   protected getDistanceBetweenDots(x1, y1, x2, y2) {
 	  return Math.sqrt( Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2) );
   }

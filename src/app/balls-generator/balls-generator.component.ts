@@ -10,18 +10,20 @@ export class BallsGeneratorComponent implements OnInit {
   offsetX: number;
   offsetY: number;
   radius: number;
-  color = "green";
+  color: string;
 
   Balls: Ball[] = [];
 
   constructor() {}
 
   ngOnInit() {
-    this.onBallAdd();
+    for (let i = 0; i < 100; i++) {
+      this.onBallAdd();
+    }
   }
 
   onBallAdd() {
-    this.Balls.push( new Ball(0, 0, 30, this.color) );
+    this.Balls.push( new Ball(0, 0, Math.random()*20+10, this.getRandomColor()) );
   }
 
   /*
@@ -30,5 +32,22 @@ export class BallsGeneratorComponent implements OnInit {
   onMouseDown(e) {
     this.offsetX = e.offsetX;
     this.offsetY = e.offsetY;
+  }
+
+  onDragStart(e, i) {
+    e.dataTransfer.effectAllowed = "move";
+    this.radius = this.Balls[i].radius;
+    this.color = this.Balls[i].color;
+  }
+
+  onDragEnd(e, i) {
+    this.radius = undefined;
+    if (e.dataTransfer.dropEffect === "move") {
+      this.Balls.splice(i, 1);
+    }
+  }
+
+  private getRandomColor():string {
+    return "hsl(" + Math.round(Math.random() * 255) + ", 80%, 50%)";
   }
 }

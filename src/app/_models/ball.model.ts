@@ -13,8 +13,8 @@ export class Ball {
     this.radius = radius || 30;
     this.color = color || '#ff0000';
 
-    this.Vx = (Math.random() * 100 - 50) * 4; // px / second
-    this.Vy = (Math.random() * 100 - 50) * 4; // px / second
+    this.Vx = (Math.random() * 100 - 50) * Math.sqrt(1 / Math.pow(this.radius, 2)) * 100; // px / second
+    this.Vy = (Math.random() * 100 - 50) * Math.sqrt(1 / Math.pow(this.radius, 2)) * 100; // px / second
   }
 
   public moove(x: number, y: number) {
