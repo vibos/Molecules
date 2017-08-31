@@ -1,5 +1,16 @@
-<div class="canvas" #myIdentifier (dragover)="onDragOver($event)" (drop)="onDragDrop($event)">
-  <div class="ball" *ngFor="let ball of Balls" [ngStyle]="{'top.px': ball.y - ball.radius, 'left.px': ball.x - ball.radius, 'background': ball.color, 'width.px': ball.radius * 2, 'height.px': ball.radius * 2}">
+<!--<div class="canvas" #myIdentifier (dragover)="onDragOver($event)" (drop)="onDragDrop($event)">-->
+  <!--<div class="ball" *ngFor="let ball of Balls" [ngStyle]="{'top.px': ball.y - ball.radius, 'left.px': ball.x - ball.radius, 'background': ball.color, 'width.px': ball.radius * 2, 'height.px': ball.radius * 2}">-->
 
-  </div>
-</div>
+  <!--</div>-->
+<!--</div>-->
+
+<canvas class="canvas" #myCanvas (dragover)="onDragOver($event)" (drop)="onDragDrop($event)"></canvas>
+
+<button (click)="onStateChange()" class="btn">
+  <span class="glyphicon glyphicon-play" *ngIf="!running"></span>
+  <span class="glyphicon glyphicon-pause" *ngIf="running"></span>
+</button>
+
+<button (click)="onSavedLoad()" class="btn"><span class="glyphicon glyphicon-eject"></span> Restore saved</button>
+
+<button (click)="onClear()" class="btn"><span class="glyphicon glyphicon-trash"></span></button>

@@ -17,13 +17,13 @@ export class BallsGeneratorComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 75; i++) {
       this.onBallAdd();
     }
   }
 
   onBallAdd() {
-    this.Balls.push( new Ball(0, 0, Math.random()*20+10, this.getRandomColor()) );
+    this.Balls.push( new Ball(0, 0, Math.random() * 40 + 8, this.getRandomColor()) );
   }
 
   /*
