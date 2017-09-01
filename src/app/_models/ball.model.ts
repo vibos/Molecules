@@ -5,12 +5,17 @@ export class Ball {
   radius: number;
   color: string;
 
+  prevX: number;
+  prevY: number;
+
   Vx: number;
   Vy: number;
 
   constructor(x: number, y: number, radius?: number, color?: string, Vx?: number, Vy?: number) {
     this.x = x;
     this.y = y;
+    this.prevX = this.x;
+    this.prevY = this.y;
     this.radius = radius || 30;
     this.color = color || '#ff0000';
 
@@ -29,6 +34,9 @@ export class Ball {
   }
 
   public moove(x: number, y: number) {
+    this.prevX = this.x;
+    this.prevY = this.y;
+
     this.x = x;
     this.y = y;
   }

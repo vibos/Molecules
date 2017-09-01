@@ -24,6 +24,7 @@ export class BallsGeneratorComponent implements OnInit {
 
   onBallAdd() {
     this.Balls.push( new Ball(0, 0, Math.random() * 40 + 8, this.getRandomColor()) );
+    // this.Balls.push( new Ball(0, 0, 15, this.getRandomColor()) );
   }
 
   /*

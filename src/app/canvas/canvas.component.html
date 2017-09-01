@@ -14,3 +14,8 @@
 <button (click)="onSavedLoad()" class="btn"><span class="glyphicon glyphicon-eject"></span> Restore saved</button>
 
 <button (click)="onClear()" class="btn"><span class="glyphicon glyphicon-trash"></span></button>
+
+<div *ngFor="let ball of Balls">
+{{ball.Px}}
+{{ball.Py}}
+</div>

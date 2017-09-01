@@ -75,66 +75,88 @@ export class CanvasComponent implements OnInit, OnDestroy {
   }
 
   simulate() {
-    // for (let z = 0; z < 100; z++) {
-      const t = this.time || Date.now();
-      this.dt = Date.now() - t;
-      this.time = Date.now();
+    const t = this.time || Date.now();
+    this.dt = Date.now() - t;
+    this.time = Date.now();
 
-      this.Balls.forEach((item, i) => {
-        let newX = item.x + this.dt * item.Vx / 1000;
-        let newY = item.y + this.dt * item.Vy / 1000;
+    this.Balls.forEach((item, i) => {
+      let newX = item.x + this.dt * item.Vx / 1000;
+      let newY = item.y + this.dt * item.Vy / 1000;// + 100 * (this.dt * this.dt / 1000000) / 2;
+      // item.Vy += (this.dt / 1000) * 100;
 
-        // x borders
-        if (newX + item.radius > this.width && item.Vx > 0) {
-          newX = this.width * 2 - newX - item.radius * 2;
-          item.Vx *= -1;
-        } else if (newX - item.radius < 0 && item.Vx < 0) {
-          newX = - newX + item.radius * 2;
-          item.Vx *= -1;
-        }
+      // x borders
+      if (newX + item.radius > this.width && item.Vx > 0) {
+        newX = this.width * 2 - newX - item.radius * 2;
+        item.Vx *= -1;
+      } else if (newX - item.radius < 0 && item.Vx < 0) {
+        newX = - newX + item.radius * 2;
+        item.Vx *= -1;
+      }
 
-        // y borders
-        if (newY + item.radius > this.height && item.Vy > 0) {
-          newY = this.height * 2 - newY - item.radius * 2;
-          item.Vy *= -1;
-        } else if (newY - item.radius < 0 && item.Vy < 0) {
-          newY = - newY + item.radius * 2;
-          item.Vy *= -1;
-        }
+      // y borders
+      if (newY + item.radius > this.height && item.Vy > 0) {
+        newY = this.height * 2 - newY - item.radius * 2;
+        item.Vy *= -1;
+      } else if (newY - item.radius < 0 && item.Vy < 0) {
+        newY = - newY + item.radius * 2;
+        item.Vy *= -1;
+      }
 
-        // each other
-/*        for (let j = i + 1; j < this.Balls.length; j++) {
-          let ball = this.Balls[j];
-          if ( this.getDistanceBetweenDots(newX, newY, ball.x, ball.y) < item.radius + ball.radius ) {
-            if (item.Vy * ball.Vy < 0) { // different directions
-              const tmp = item.Py / ball.m;
-              item.Vy = ball.Py / item.m;
-              ball.Vy = tmp;
-            } else if (item.Vy * ball.Vy > 0) {
-              // if (item.Vy > ball.Vy) {
-              //   ball.Vy += item.Vy * item.m / ball.m;
-              //   item.Vy = 0;
-              // } else if (item.Vy < ball.Vy) {
-              //   item.Vy += ball.Vy * ball.m / item.m;
-              //   ball.Vy = 0;
-              // }
-              //
-              // newX = item.x;
-              // newY = item.y;
-            } else if (item.Vy === 0) {
+      item.moove(newX, newY);
+    });
+
+    // each other
+    this.Balls.forEach((item, i) => {
+      for (let j = i + 1; j < this.Balls.length; j++) {
+        let ball = this.Balls[j];
+        if (this.getDistanceBetweenDots(item.x, item.y, ball.x, ball.y) < item.radius + ball.radius) {
+          if (this.getDistanceBetweenDots(item.prevX, item.prevY, ball.prevX, ball.prevY) > this.getDistanceBetweenDots(item.x, item.y, ball.x, ball.y)) {
+            let tgA = (ball.y - item.y) / (ball.x - item.x);
+            let cosA = Math.cos(Math.atan(tgA));
+            let sinA = Math.sin(Math.atan(tgA));
+
+            if (item.Vy * ball.Vy < 0) {
+              // different directions
+              // exchange impulses
+              // console.log(ball.Px+ item.Px, ball.Py+ item.Py);
+
+              // нужно доработать, появляется лишняя энергия
+
+              let ix = ((item.Vx + item.Vy) * cosA * cosA) * item.m;
+              let iy = ((item.Vx + item.Vy) * cosA * sinA) * item.m;
+              let bx = ((ball.Vx + ball.Vy) * cosA * cosA) * ball.m;
+              let by = ((ball.Vx + ball.Vy) * cosA * sinA) * ball.m;
+
+              item.Vx += bx - ix;
+              item.Vy += by - iy;
+
+              ball.Vx += ix - bx;
+              ball.Vy += iy - by;
+
+              // console.log(ball.Px+ item.Px, ball.Py+ item.Py);
+            } else if (Math.abs(item.Vy) < Math.abs(ball.Vy)) {
+              // same directions
+              // нужно доработать для передачи импульса вдоль линии столкновения центров
+
               item.Vy += ball.Py / item.m;
               ball.Vy = 0;
-            } else {
+
+              item.Vx += ball.Px / item.m;
+              ball.Vx = 0;
+            } else if (Math.abs(item.Vy) > Math.abs(ball.Vy)) {
+              // same directions
+              // нужно доработать для передачи импульса вдоль линии столкновения центров
               ball.Vy += item.Py / ball.m;
               item.Vy = 0;
+
+              ball.Vx += item.Px / ball.m;
+              item.Vx = 0;
             }
           }
-        }*/
-
-        item.moove(newX, newY);
-      });
-    }
-  // }
+        }
+      }
+    });
+  }
 
   /*
    * Draw circles on canvas
@@ -149,6 +171,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
 
     // this.ctx.fillStyle = "rgba(255, 255, 255, 0.06)";
     // this.ctx.fillRect(0, 0, this.width, this.height);
+
     this.ctx.clearRect(0, 0, this.width, this.height);
 
     this.Balls.forEach((ball) => {
