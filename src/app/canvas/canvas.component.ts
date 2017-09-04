@@ -16,6 +16,8 @@ export class CanvasComponent implements OnInit, OnDestroy {
   height: number;
 
   private running: boolean;
+  interaction = true;
+  shadow = false;
 
   dt = 1000 / 60; // ms
   time: number;
@@ -31,18 +33,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
   constructor() { }
 
   ngOnInit() {
-    this.ctx = this.canvasRef.nativeElement.getContext('2d');
-
-    this.width = this.canvasRef.nativeElement.offsetWidth;
-    this.height = this.canvasRef.nativeElement.offsetHeight;
-
-    this.canvasRef.nativeElement.width = this.width;
-    this.canvasRef.nativeElement.style.width = "auto";
-    this.canvasRef.nativeElement.height = this.height;
-    this.canvasRef.nativeElement.style.height = "auto";
-
-    this.ctx.fillStyle = "#fff";
-    this.ctx.fillRect(0, 0, this.width, this.height);
+    this.onResize();
 
     this.running = true;
     this.paint();
@@ -74,6 +65,30 @@ export class CanvasComponent implements OnInit, OnDestroy {
     }
   }
 
+  /*
+   * Resize canvas
+   */
+  onResize() {
+    this.canvasRef.nativeElement.style.width = '';
+    this.canvasRef.nativeElement.style.height = '';
+
+    this.ctx = this.canvasRef.nativeElement.getContext('2d');
+
+    this.width = this.canvasRef.nativeElement.offsetWidth;
+    this.height = this.canvasRef.nativeElement.offsetHeight;
+
+    this.canvasRef.nativeElement.width = this.width;
+    this.canvasRef.nativeElement.style.width = "auto";
+    this.canvasRef.nativeElement.height = this.height;
+    this.canvasRef.nativeElement.style.height = "auto";
+
+    this.ctx.fillStyle = "#fff";
+    this.ctx.fillRect(0, 0, this.width, this.height);
+  }
+
+  /*
+   * Get balls positions
+   */
   simulate() {
     const t = this.time || Date.now();
     this.dt = Date.now() - t;
@@ -81,7 +96,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
 
     this.Balls.forEach((item, i) => {
       let newX = item.x + this.dt * item.Vx / 1000;
-      let newY = item.y + this.dt * item.Vy / 1000;// + 100 * (this.dt * this.dt / 1000000) / 2;
+      let newY = item.y + this.dt * item.Vy / 1000;
       // item.Vy += (this.dt / 1000) * 100;
 
       // x borders
@@ -102,60 +117,60 @@ export class CanvasComponent implements OnInit, OnDestroy {
         item.Vy *= -1;
       }
 
-      item.moove(newX, newY);
+      item.move(newX, newY);
     });
 
-    // each other
-    this.Balls.forEach((item, i) => {
-      for (let j = i + 1; j < this.Balls.length; j++) {
-        let ball = this.Balls[j];
-        if (this.getDistanceBetweenDots(item.x, item.y, ball.x, ball.y) < item.radius + ball.radius) {
-          if (this.getDistanceBetweenDots(item.prevX, item.prevY, ball.prevX, ball.prevY) > this.getDistanceBetweenDots(item.x, item.y, ball.x, ball.y)) {
-            let tgA = (ball.y - item.y) / (ball.x - item.x);
-            let cosA = Math.cos(Math.atan(tgA));
-            let sinA = Math.sin(Math.atan(tgA));
+    if (this.interaction) {
+      // interaction
+      this.Balls.forEach((item, i) => {
+        for (let j = i + 1; j < this.Balls.length; j++) {
+          let ball = this.Balls[j];
+          if (this.getDistanceBetweenDots(item.x, item.y, ball.x, ball.y) < item.radius + ball.radius) {
+            if (this.getDistanceBetweenDots(item.prevX, item.prevY, ball.prevX, ball.prevY) > this.getDistanceBetweenDots(item.x, item.y, ball.x, ball.y)) {
+              // console.log("P: ", Math.round(ball.Px + item.Px + ball.Py + item.Py), "E: ", Math.round(item.P * item.P / (2 * item.m) + ball.P * ball.P / (2 * ball.m)));
 
-            if (item.Vy * ball.Vy < 0) {
-              // different directions
-              // exchange impulses
-              // console.log(ball.Px+ item.Px, ball.Py+ item.Py);
+              let tgA = (ball.y - item.y) / (ball.x - item.x);
+              let cosA = Math.cos(Math.atan(tgA));
+              let sinA = Math.sin(Math.atan(tgA));
 
-              // нужно доработать, появляется лишняя энергия
+              // problem with energy saving
 
-              let ix = ((item.Vx + item.Vy) * cosA * cosA) * item.m;
-              let iy = ((item.Vx + item.Vy) * cosA * sinA) * item.m;
-              let bx = ((ball.Vx + ball.Vy) * cosA * cosA) * ball.m;
-              let by = ((ball.Vx + ball.Vy) * cosA * sinA) * ball.m;
+              const Vi = item.Vy * sinA + item.Vx * cosA;
+              const Vb = ball.Vy * sinA + ball.Vx * cosA;
 
-              item.Vx += bx - ix;
-              item.Vy += by - iy;
+              const ix = Vi * cosA * item.m;
+              const iy = Vi * sinA * item.m;
 
-              ball.Vx += ix - bx;
-              ball.Vy += iy - by;
+              const bx = Vb * cosA * ball.m;
+              const by = Vb * sinA * ball.m;
 
-              // console.log(ball.Px+ item.Px, ball.Py+ item.Py);
-            } else if (Math.abs(item.Vy) < Math.abs(ball.Vy)) {
-              // same directions
-              // нужно доработать для передачи импульса вдоль линии столкновения центров
+              if (Vi * Vb <= 0) {
+                item.Vx += (bx - ix) / item.m;
+                item.Vy += (by - iy) / item.m;
+                ball.Vx += (ix - bx) / ball.m;
+                ball.Vy += (iy - by) / ball.m;
+              } else if (Math.abs(Vi) > Math.abs(Vb)) {
+                item.Vx += ( -ix) / item.m;
+                item.Vy += ( -iy) / item.m;
+                ball.Vx += (ix) / ball.m;
+                ball.Vy += (iy) / ball.m;
+              } else if (Math.abs(Vb) > Math.abs(Vi)) {
+                item.Vx += (bx) / item.m;
+                item.Vy += (by) / item.m;
+                ball.Vx += ( -bx) / ball.m;
+                ball.Vy += ( -by) / ball.m;
+              }
 
-              item.Vy += ball.Py / item.m;
-              ball.Vy = 0;
+              item.move(item.prevX, item.prevY);
+              ball.move(ball.prevX, ball.prevY);
 
-              item.Vx += ball.Px / item.m;
-              ball.Vx = 0;
-            } else if (Math.abs(item.Vy) > Math.abs(ball.Vy)) {
-              // same directions
-              // нужно доработать для передачи импульса вдоль линии столкновения центров
-              ball.Vy += item.Py / ball.m;
-              item.Vy = 0;
-
-              ball.Vx += item.Px / ball.m;
-              item.Vx = 0;
+              // console.log("P: ", Math.round(ball.Px + item.Px + ball.Py + item.Py), "E: ", Math.round(item.P * item.P / (2 * item.m) + ball.P * ball.P / (2 * ball.m)));
+              // console.log("------");
             }
           }
         }
-      }
-    });
+      });
+    }
   }
 
   /*
@@ -169,10 +184,13 @@ export class CanvasComponent implements OnInit, OnDestroy {
 
     this.simulate();
 
-    // this.ctx.fillStyle = "rgba(255, 255, 255, 0.06)";
-    // this.ctx.fillRect(0, 0, this.width, this.height);
-
-    this.ctx.clearRect(0, 0, this.width, this.height);
+    // Leave shadow after balls
+    if (this.shadow) {
+      this.ctx.fillStyle = "rgba(255, 255, 255, 0.06)";
+      this.ctx.fillRect(0, 0, this.width, this.height);
+    } else {
+      this.ctx.clearRect(0, 0, this.width, this.height);
+    }
 
     this.Balls.forEach((ball) => {
       this.ctx.beginPath();
@@ -215,5 +233,6 @@ export class CanvasComponent implements OnInit, OnDestroy {
     this.Balls = [];
     this.time = undefined;
     this.ctx.clearRect(0, 0, this.width, this.height);
+    console.clear();
   }
 }

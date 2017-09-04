@@ -33,7 +33,7 @@ export class Ball {
     this.Vy = Vy || p / this.m * Math.sin(angle);
   }
 
-  public moove(x: number, y: number) {
+  public move(x: number, y: number) {
     this.prevX = this.x;
     this.prevY = this.y;
 
@@ -47,5 +47,9 @@ export class Ball {
 
   get Py(): number {
     return this.m * this.Vy;
+  }
+
+  get P(): number {
+    return this.m * Math.sqrt(Math.pow(this.Vx, 2) + Math.pow(this.Vy, 2));
   }
 }

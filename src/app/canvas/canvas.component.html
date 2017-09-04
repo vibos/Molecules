@@ -4,7 +4,7 @@
   <!--</div>-->
 <!--</div>-->
 
-<canvas class="canvas" #myCanvas (dragover)="onDragOver($event)" (drop)="onDragDrop($event)"></canvas>
+<canvas class="canvas" #myCanvas (dragover)="onDragOver($event)" (drop)="onDragDrop($event)" (window:resize)="onResize()"></canvas>
 
 <button (click)="onStateChange()" class="btn">
   <span class="glyphicon glyphicon-play" *ngIf="!running"></span>
@@ -15,7 +15,7 @@
 
 <button (click)="onClear()" class="btn"><span class="glyphicon glyphicon-trash"></span></button>
 
-<div *ngFor="let ball of Balls">
-{{ball.Px}}
-{{ball.Py}}
-</div>
+<label>
+  <input type="checkbox" [(ngModel)]="interaction">
+  Interaction
+</label>

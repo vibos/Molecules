@@ -17,14 +17,14 @@ export class BallsGeneratorComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    for (let i = 0; i < 75; i++) {
+    for (let i = 0; i < 30; i++) {
       this.onBallAdd();
     }
   }
 
   onBallAdd() {
-    this.Balls.push( new Ball(0, 0, Math.random() * 40 + 8, this.getRandomColor()) );
-    // this.Balls.push( new Ball(0, 0, 15, this.getRandomColor()) );
+    this.Balls.push( new Ball(0, 0, Math.random() * 40 + 8, this.getRandomColor()) ); // random size
+    // this.Balls.push( new Ball(0, 0, 15, this.getRandomColor()) ); // fixed size
   }
 
   /*
@@ -35,12 +35,18 @@ export class BallsGeneratorComponent implements OnInit {
     this.offsetY = e.offsetY;
   }
 
+  /*
+   * Remember ball parameters when drag starts
+   */
   onDragStart(e, i) {
     e.dataTransfer.effectAllowed = "move";
     this.radius = this.Balls[i].radius;
     this.color = this.Balls[i].color;
   }
 
+  /*
+   * Remove ball from list when drag ends
+   */
   onDragEnd(e, i) {
     this.radius = undefined;
     if (e.dataTransfer.dropEffect === "move") {
