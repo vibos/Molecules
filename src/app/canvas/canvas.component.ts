@@ -15,7 +15,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
   width: number;
   height: number;
 
-  private running: boolean;
+  running: boolean;
   interaction = true;
   shadow = false;
 
