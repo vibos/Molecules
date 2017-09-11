@@ -3,6 +3,18 @@
     <div class="generator jumbotron">
       <div class="ball" draggable="true" (dragstart)="onDragStart($event, i)" (dragend)="onDragEnd($event, i)" *ngFor="let ball of Balls; let i = index" (mousedown)="onMouseDown($event)" [ngStyle]="{'background': ball.color, 'width.px': ball.radius * 2, 'height.px': ball.radius * 2}"></div>
     </div>
+	
+    <div class="panel panel-default">
+	  <div class="panel-body">
+		Drag balls from left to right &rarr;
+	  </div>
+	</div>
+	
+    <div class="panel panel-default">
+	  <div class="panel-body">
+		All balls have equal impulses but different directions of motion.
+	  </div>
+	</div>
   </div>
   <div class="col-xs-6">
     <app-canvas [offsetX]="offsetX" [offsetY]="offsetY" [radius]="radius" [color]="color"></app-canvas>
